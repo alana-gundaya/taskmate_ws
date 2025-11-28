@@ -156,32 +156,46 @@ cd taskmate_ws
 
 2. **Create and activate Python virtual environment**:
 ```bash
-python -m venv taskmate_backend/.venv
-# On Windows:
-taskmate_backend\.venv\Scripts\Activate.ps1
-# On macOS/Linux:
-source taskmate_backend/.venv/bin/activate
+# From project root (ws_taskmate)
+cd taskmate_backend
+python -m venv .venv
+cd ..
 ```
 
-3. **Install Python dependencies**:
+3. **Activate the virtual environment** (Windows PowerShell):
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Or for macOS/Linux:
+```bash
+source .venv/bin/activate
+```
+
+4. **Install Python dependencies**:
 ```bash
 pip install django djangorestframework django-cors-headers
 ```
 
-4. **Apply database migrations**:
+5. **Create database migrations**:
+```bash
+python manage.py makemigrations
+```
+
+6. **Apply database migrations**:
 ```bash
 python manage.py migrate
 ```
 
-5. **Create a superuser (admin)**:
+7. **Create a superuser (admin account)**:
 ```bash
 python manage.py createsuperuser
-# Follow prompts to create admin account
 ```
+Follow the prompts to create your admin account. This account is required to access the Django admin panel and manage tasks manually.
 
 ### Frontend Setup
 
-1. **Navigate to frontend directory**:
+1. **Navigate to frontend directory** (from project root):
 ```bash
 cd taskmate-frontend
 ```
@@ -191,7 +205,12 @@ cd taskmate-frontend
 npm install
 ```
 
-3. **Configure API endpoint** (already set in `src/api/axios.js`):
+3. **If `npm start` fails**, update react-scripts:
+```bash
+npm install react-scripts@latest --save
+```
+
+4. **Configure API endpoint** (already set in `src/api/axios.js`):
 ```javascript
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8000/api/',
@@ -206,34 +225,68 @@ const axiosInstance = axios.create({
 
 ## Running the Application
 
-### Start Backend Server
+### Step 1: Start Backend Server
 
-From the project root:
-```bash
+From the project root (`ws_taskmate`), ensure virtual environment is activated:
+
+```powershell
+# Activate virtual environment if not already active
+.\.venv\Scripts\Activate.ps1
+
+# Start Django development server
 python manage.py runserver
-# Server runs on http://localhost:8000
+# Server runs on http://127.0.0.1:8000
 ```
 
-Or using venv python directly (no activation needed):
-```bash
-taskmate_backend\.venv\Scripts\python manage.py runserver
-```
+### Step 2: Access Django Admin Panel (First Time Setup)
 
-### Start Frontend Development Server
+1. Open browser to `http://127.0.0.1:8000/admin/`
+2. Sign in with your superuser credentials (created during setup)
+3. You can manually create tasks and manage data from here
 
-From `taskmate-frontend/` directory:
+### Step 3: Start Frontend Development Server
+
+**Open a new terminal** and from `taskmate-frontend/` directory:
+
 ```bash
+cd taskmate-frontend
 npm start
 # Frontend runs on http://localhost:3000
-# Browser will auto-open to http://localhost:3000
+# Browser will auto-open automatically
 ```
 
-### Access the Application
+**If `npm start` fails:**
+```bash
+npm install react-scripts@latest --save
+npx react-scripts start
+```
+
+Or update `package.json` scripts:
+```json
+"scripts": {
+  "start": "npx react-scripts start",
+  ...
+}
+```
+
+Then run:
+```bash
+npm install
+npm start
+```
+
+### Step 4: Access the Application
 
 1. Open browser to `http://localhost:3000`
-2. Register a new account or log in
-3. Navigate to Dashboard at `/dashboard`
-4. Start managing tasks!
+2. Register a new account
+3. Log in with your credentials
+4. Navigate to Dashboard and start managing tasks!
+
+### Troubleshooting First-Time Login Issues
+
+- **Can't create login/signup**: Ensure backend is running on `http://127.0.0.1:8000`
+- **401 Unauthorized errors**: Check that you're using a valid registered account
+- **CORS errors**: Verify Django CORS settings allow `http://localhost:3000`
 
 ---
 
